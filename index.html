@@ -1,191 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLASHED Risk Calculator</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 8px; margin-top: 5px; }
-        .yes-no-buttons { display: flex; gap: 10px; margin-top: 5px; }
-        .yes-no-buttons button { padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; background-color: #f9f9f9; }
-        .yes-no-buttons button.active { background-color: #4CAF50; color: white; }
-        .explanation { font-size: 0.9em; color: #555; margin-top: 5px; }
-        .calculate-reset-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        button.calculate, button.reset { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button.reset { background-color: #f44336; }
-        .result { margin-top: 20px; font-weight: bold; }
-        .model-info { margin-top: 20px; }
-        .model-info h2 { margin-bottom: 10px; }
-        .model-info ul { margin-left: 20px; }
-        .nomogram { margin-top: 20px; }
-        .nomogram img { width: 100%; max-width: 600px; }
-        .full-text-link { margin-top: 20px; text-align: center; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLASHED Risk Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0; /* Light gray background */
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff; /* White container for contrast */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .yes-no-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .yes-no-buttons button {
+      padding: 10px 20px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+    .yes-no-buttons button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .explanation {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 5px;
+    }
+    .calculate-reset-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    button.calculate, button.reset {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button.reset {
+      background-color: #f44336;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      background-color: #e8f5e9; /* Light greenish background for results */
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .model-info {
+      margin-top: 20px;
+    }
+    .model-info ul {
+      margin-left: 20px;
+    }
+    .nomogram {
+      margin-top: 20px;
+    }
+    .nomogram img {
+      width: 100%;
+      max-width: 600px;
+    }
+    .full-text-link {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .license {
+      text-align: center;
+      margin-top: 20px;
+    }
+    /* Light color boxes for each paragraph */
+    p {
+      background-color: #f9f9f9;
+      padding: 10px;
+      border-radius: 5px;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>CLASHED Risk Calculator</h1>
+  <div class="container">
+    <h1>CLASHED Risk Calculator</h1>
 
-        <!-- Model Information -->
-        <div class="model-info">
-            <h2>About the CLASHED Model</h2>
-            <p>
-                The <strong>CLASHED model</strong> is a novel risk prediction tool designed to assess the risk of <strong>Myocardial Injury after Non-Cardiac Surgery (MINS)</strong> in elderly patients (aged 65 and older) undergoing non-elective surgery. The model was developed based on a retrospective study of 370 elderly patients who underwent non-elective surgery due to hip fractures, acute abdominal pathologies, or neurosurgical conditions. The study excluded patients under 65 years of age and those with conditions such as type 1 myocardial infarction, acute decompensated heart failure, acute pulmonary embolism, acute renal failure, sepsis, stroke, and atrial fibrillation with rapid ventricular response.
-            </p>
-            <h3>Key Inclusion Criteria:</h3>
-            <ul>
-                <li><strong>Age:</strong> Patients aged 65 years and older.</li>
-                <li><strong>Surgery Type:</strong> Non-elective surgeries, including hip fractures, acute abdominal pathologies, and neurosurgical procedures.</li>
-            </ul>
-        </div>
-
-        <!-- Creatinine Input -->
-        <label for="creatinine">Creatinine (mg/dL):</label>
-        <input type="number" id="creatinine" step="0.1">
-
-        <!-- Lymphocyte Input -->
-        <label for="lymphocyte">Lymphocyte (10^3/uL):</label>
-        <input type="number" id="lymphocyte" step="0.1">
-
-        <!-- Aortic Regurgitation (Yes/No Buttons) -->
-        <label>Aortic Regurgitation (Moderate or Severe only):</label>
-        <div class="yes-no-buttons" id="ar-buttons">
-            <button onclick="setAR(true)">Yes</button>
-            <button onclick="setAR(false)">No</button>
-        </div>
-        <div class="explanation">Select "Yes" only if aortic regurgitation is moderate or severe.</div>
-
-        <!-- Stroke/CVD (Yes/No Buttons) -->
-        <label>Stroke/CVD:</label>
-        <div class="yes-no-buttons" id="stroke-buttons">
-            <button onclick="setStroke(true)">Yes</button>
-            <button onclick="setStroke(false)">No</button>
-        </div>
-
-        <!-- Hemoglobin Input -->
-        <label for="hemoglobin">Hemoglobin (g/dL):</label>
-        <input type="number" id="hemoglobin" step="0.1">
-
-        <!-- LVEF Input -->
-        <label for="lvef">LVEF (%):</label>
-        <input type="number" id="lvef" step="1">
-
-        <!-- D-dimer Input -->
-        <label for="dimer">D-dimer (ng/mL):</label>
-        <input type="number" id="dimer" step="100">
-
-        <!-- Calculate and Reset Buttons -->
-        <div class="calculate-reset-buttons">
-            <button class="calculate" onclick="calculateRisk()">Calculate Risk</button>
-            <button class="reset" onclick="resetForm()">Reset</button>
-        </div>
-
-        <!-- Result Display -->
-        <div class="result" id="result"></div>
-
-        <!-- Nomogram Explanation -->
-        <div class="nomogram">
-            <h3>Nomogram Explanation</h3>
-            <p>
-                The total score is calculated based on the input parameters. The probability of developing post-operative MINS is derived from the total score using the following scale:
-                <ul>
-                    <li><strong>190 points:</strong> 0.1 (10% risk)</li>
-                    <li><strong>280 points:</strong> 0.7 (70% risk)</li>
-                </ul>
-                For example, a total score of 255 points corresponds to a probability of 0.5 (50% risk).
-            </p>
-        </div>
-
-        <!-- Full Text Link -->
-        <div class="full-text-link">
-            <p>For more details, read the full article: <a href="https://doi.org/10.3390/jcdd12010006" target="_blank">https://doi.org/10.3390/jcdd12010006</a></p>
-        </div>
-      <!-- MIT License -->
-        <div class="license" style="text-align: center;">
-            <p><strong>MIT License</strong></p>
-            <p>Copyright (c) 2025 cenkorucu</p>
-        </div>
+    <!-- Model Information -->
+    <div class="model-info">
+      <h2>About the CLASHED Model</h2>
+      <p>
+        The <strong>CLASHED model</strong> is a novel risk prediction tool designed to assess the risk of <strong>Myocardial Injury after Non-Cardiac Surgery (MINS)</strong> in elderly patients (aged 65 and older) undergoing non-elective surgery. The model was developed based on a retrospective study of 370 elderly patients who underwent non-elective surgery due to hip fractures, acute abdominal pathologies, or neurosurgical conditions. The study excluded patients under 65 years of age and those with conditions such as type 1 myocardial infarction, acute decompensated heart failure, acute pulmonary embolism, acute renal failure, sepsis, stroke, and atrial fibrillation with rapid ventricular response.
+      </p>
+      <h3>Key Inclusion Criteria:</h3>
+      <ul>
+        <li><strong>Age:</strong> Patients aged 65 years and older.</li>
+        <li><strong>Surgery Type:</strong> Non-elective surgeries, including hip fractures, acute abdominal pathologies, and neurosurgical procedures.</li>
+      </ul>
     </div>
 
+    <!-- Creatinine Input -->
+    <label for="creatinine">Creatinine (mg/dL):</label>
+    <input type="number" id="creatinine" step="0.1">
 
-    <script>
-        // Variables to store AR and Stroke/CVD values
-        let ar = 0; // 0 = No, 1 = Yes
-        let stroke = 0; // 0 = No, 1 = Yes
+    <!-- Lymphocyte Input -->
+    <label for="lymphocyte">Lymphocyte (10^3/uL):</label>
+    <input type="number" id="lymphocyte" step="0.1">
 
-        // Function to set Aortic Regurgitation value
-        function setAR(value) {
-            ar = value ? 1 : 0;
-            updateButtonState('ar-buttons', value);
-        }
+    <!-- Aortic Regurgitation (Yes/No Buttons) -->
+    <label>Aortic Regurgitation (Moderate or Severe only):</label>
+    <div class="yes-no-buttons" id="ar-buttons">
+      <button onclick="setAR(true)" aria-label="Yes">Yes</button>
+      <button onclick="setAR(false)" aria-label="No">No</button>
+    </div>
+    <div class="explanation">Select "Yes" only if aortic regurgitation is moderate or severe.</div>
 
-        // Function to set Stroke/CVD value
-        function setStroke(value) {
-            stroke = value ? 1 : 0;
-            updateButtonState('stroke-buttons', value);
-        }
+    <!-- Stroke/CVD (Yes/No Buttons) -->
+    <label>Stroke/CVD:</label>
+    <div class="yes-no-buttons" id="stroke-buttons">
+      <button onclick="setStroke(true)" aria-label="Yes">Yes</button>
+      <button onclick="setStroke(false)" aria-label="No">No</button>
+    </div>
 
-        // Function to update button active state
-        function updateButtonState(buttonGroupId, value) {
-            const buttons = document.getElementById(buttonGroupId).querySelectorAll('button');
-            buttons[0].classList.toggle('active', value); // Yes button
-            buttons[1].classList.toggle('active', !value); // No button
-        }
+    <!-- Hemoglobin Input -->
+    <label for="hemoglobin">Hemoglobin (g/dL):</label>
+    <input type="number" id="hemoglobin" step="0.1">
 
-        // Function to reset the form
-        function resetForm() {
-            document.getElementById('creatinine').value = '';
-            document.getElementById('lymphocyte').value = '';
-            document.getElementById('hemoglobin').value = '';
-            document.getElementById('lvef').value = '';
-            document.getElementById('dimer').value = '';
-            setAR(false);
-            setStroke(false);
-            document.getElementById('result').innerText = '';
-        }
+    <!-- LVEF Input -->
+    <label for="lvef">LVEF (%):</label>
+    <input type="number" id="lvef" step="1">
 
-        // Main calculation function
-        function calculateRisk() {
-            const creatinine = parseFloat(document.getElementById('creatinine').value);
-            const lymphocyte = parseFloat(document.getElementById('lymphocyte').value);
-            const hemoglobin = parseFloat(document.getElementById('hemoglobin').value);
-            const lvef = parseFloat(document.getElementById('lvef').value);
-            const dimer = parseFloat(document.getElementById('dimer').value);
+    <!-- D-dimer Input -->
+    <label for="dimer">D-dimer (ng/mL):</label>
+    <input type="number" id="dimer" step="100">
 
-            // Calculate points based on the updated nomogram
-            let points = 0;
-            
-            // Creatinine: 0 is 0 points, 1.5 is 17 points
-            points += (creatinine / 1.5) * 17;
-            
-            // Lymphocyte: 2 is 67 points, 8 is 0 points
-            points += Math.max(0, 67 - (lymphocyte - 2) * (67 / 6));
-            
-            // Aortic Regurgitation: 0 if negative, 55 if positive
-            points += ar * 55;
-            
-            // Stroke/CVD: 0 if negative, 22 if positive
-            points += stroke * 22;
-            
-            // Hemoglobin: 18 is 0 points, 10 is 65 points
-            points += ((18 - hemoglobin) / 8) * 65;
-            
-            // LVEF: 70 is 0 points, 25 is 85 points
-            points += ((70 - lvef) / 45) * 85;
-            
-            // D-dimer: 0 is 0 points, 5500 is 55 points
-            points += (dimer / 5500) * 55;
+    <!-- Calculate and Reset Buttons -->
+    <div class="calculate-reset-buttons">
+      <button class="calculate" onclick="calculateRisk()">Calculate Risk</button>
+      <button class="reset" onclick="resetForm()">Reset</button>
+    </div>
 
-            // Calculate probability based on total points (190 points = 0.1, 280 points = 0.7)
-            let probability = 0.1 + ((points - 190) / 90) * 0.6;
-            probability = Math.max(0.1, Math.min(0.7, probability)); // Ensure probability stays within 0.1 to 0.7
+    <!-- Result Display -->
+    <div class="result" id="result"></div>
 
-            // Display result
-            document.getElementById('result').innerText = `Total Points: ${points.toFixed(2)}. The “Probability” of the total points was ${probability.toFixed(2)}, indicating a ${(probability * 100).toFixed(2)}% risk of developing post-op MINS.`;
-        }
-    </script>
+    <!-- Nomogram Explanation -->
+    <div class="nomogram">
+      <h3>Nomogram Explanation</h3>
+      <p>
+        The total score is calculated based on the input parameters. The probability of developing post-operative MINS is derived from the total score using the following scale:
+      </p>
+      <ul>
+        <li><strong>190 points:</strong> 0.1 (10% risk)</li>
+        <li><strong>280 points:</strong> 0.7 (70% risk)</li>
+      </ul>
+      <p>For example, a total score of 255 points corresponds to a probability of 0.5 (50% risk).</p>
+    </div>
+
+    <!-- Full Text Link -->
+    <div class="full-text-link">
+      <p>For more details, read the full article: <a href="https://doi.org/10.3390/jcdd12010006" target="_blank">https://doi.org/10.3390/jcdd12010006</a></p>
+    </div>
+    
+    <!-- MIT License -->
+    <div class="license" style="text-align: center;">
+      <p><strong>MIT License</strong></p>
+      <p>Copyright (c) 2025 cenkorucu</p>
+    </div>
+  </div>
+
+  <script>
+    // Variables to store AR and Stroke/CVD values
+    let ar = 0; // 0 = No, 1 = Yes
+    let stroke = 0; // 0 = No, 1 = Yes
+
+    // Function to set Aortic Regurgitation value
+    function setAR(value) {
+      ar = value ? 1 : 0;
+      updateButtonState('ar-buttons', value);
+    }
+
+    // Function to set Stroke/CVD value
+    function setStroke(value) {
+      stroke = value ? 1 : 0;
+      updateButtonState('stroke-buttons', value);
+    }
+
+    // Function to update button active state
+    function updateButtonState(buttonGroupId, value) {
+      const buttons = document.getElementById(buttonGroupId).querySelectorAll('button');
+      buttons[0].classList.toggle('active', value); // Yes button
+      buttons[1].classList.toggle('active', !value); // No button
+    }
+
+    // Function to reset the form
+    function resetForm() {
+      document.getElementById('creatinine').value = '';
+      document.getElementById('lymphocyte').value = '';
+      document.getElementById('hemoglobin').value = '';
+      document.getElementById('lvef').value = '';
+      document.getElementById('dimer').value = '';
+      setAR(false);
+      setStroke(false);
+      document.getElementById('result').innerText = '';
+    }
+
+    // Main calculation function
+    function calculateRisk() {
+      // Get input values
+      const creatinine = parseFloat(document.getElementById('creatinine').value);
+      const lymphocyte = parseFloat(document.getElementById('lymphocyte').value);
+      const hemoglobin = parseFloat(document.getElementById('hemoglobin').value);
+      const lvef = parseFloat(document.getElementById('lvef').value);
+      const dimer = parseFloat(document.getElementById('dimer').value);
+
+      // Validate inputs
+      if (isNaN(creatinine) || isNaN(lymphocyte) || isNaN(hemoglobin) || isNaN(lvef) || isNaN(dimer)) {
+        alert('Please fill in all fields before calculating.');
+        return;
+      }
+
+      // Calculate points based on the updated nomogram
+      let points = 0;
+      
+      // Creatinine: 0 is 0 points, 1.5 is 17 points
+      points += (creatinine / 1.5) * 17;
+      
+      // Lymphocyte: 2 is 67 points, 8 is 0 points
+      points += Math.max(0, 67 - (lymphocyte - 2) * (67 / 6));
+      
+      // Aortic Regurgitation: 0 if negative, 55 if positive
+      points += ar * 55;
+      
+      // Stroke/CVD: 0 if negative, 22 if positive
+      points += stroke * 22;
+      
+      // Hemoglobin: 18 is 0 points, 10 is 65 points
+      points += ((18 - hemoglobin) / 8) * 65;
+      
+      // LVEF: 70 is 0 points, 25 is 85 points
+      points += ((70 - lvef) / 45) * 85;
+      
+      // D-dimer: 0 is 0 points, 5500 is 55 points
+      points += (dimer / 5500) * 55;
+
+      // Calculate probability based on total points (190 points = 0.1, 280 points = 0.7)
+      let probability = 0.1 + ((points - 190) / 90) * 0.6;
+      probability = Math.max(0.1, Math.min(0.7, probability)); // Ensure probability stays within 0.1 to 0.7
+
+      // Display result
+      document.getElementById('result').innerText = `Total Points: ${points.toFixed(2)}. The “Probability” of the total points was ${probability.toFixed(2)}, indicating a ${(probability * 100).toFixed(2)}% risk of developing post-op MINS.`;
+    }
+  </script>
 </body>
 </html>
