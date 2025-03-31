@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0; /* Light gray background */
+      background-color: #f0f0f0;
       margin: 0;
       padding: 20px;
     }
@@ -15,7 +15,7 @@
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
-      background-color: #fff; /* White container for contrast */
+      background-color: #fff;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
     }
@@ -74,7 +74,7 @@
     .result {
       margin-top: 20px;
       font-weight: bold;
-      background-color: #e8f5e9; /* Light greenish background for results */
+      background-color: #e8f5e9;
       padding: 10px;
       border-radius: 4px;
     }
@@ -86,6 +86,7 @@
     }
     .nomogram {
       margin-top: 20px;
+      display: none;
     }
     .nomogram img {
       width: 100%;
@@ -99,7 +100,6 @@
       text-align: center;
       margin-top: 20px;
     }
-    /* Light color boxes for each paragraph */
     p {
       background-color: #f9f9f9;
       padding: 10px;
@@ -171,14 +171,15 @@
     <div class="result" id="result"></div>
 
     <!-- Nomogram Explanation -->
-    <div class="nomogram">
+    <div class="nomogram" id="nomogram-explanation">
       <h3>Nomogram Explanation</h3>
       <p>
         The total score is calculated based on the input parameters. The probability of developing post-operative MINS is derived from the total score using the following scale:
       </p>
       <ul>
-        <li><strong>190 points:</strong> 0.1 (10% risk)</li>
-        <li><strong>280 points:</strong> 0.7 (70% risk)</li>
+        <li><strong>Score &lt; 190 points:</strong> &lt;10% risk</li>
+        <li><strong>190 points:</strong> 10% risk</li>
+        <li><strong>280 points:</strong> 70% risk</li>
       </ul>
       <p>For example, a total score of 255 points corresponds to a probability of 0.5 (50% risk).</p>
     </div>
@@ -189,7 +190,7 @@
     </div>
     
     <!-- MIT License -->
-    <div class="license" style="text-align: center;">
+    <div class="license">
       <p><strong>MIT License</strong></p>
       <p>Copyright (c) 2025 cenkorucu</p>
     </div>
@@ -197,8 +198,8 @@
 
   <script>
     // Variables to store AR and Stroke/CVD values
-    let ar = 0; // 0 = No, 1 = Yes
-    let stroke = 0; // 0 = No, 1 = Yes
+    let ar = 0;
+    let stroke = 0;
 
     // Function to set Aortic Regurgitation value
     function setAR(value) {
@@ -214,9 +215,9 @@
 
     // Function to update button active state
     function updateButtonState(buttonGroupId, value) {
-      const buttons = document.getElementById(buttonGroupId).querySelectorAll('button');
-      buttons[0].classList.toggle('active', value); // Yes button
-      buttons[1].classList.toggle('active', !value); // No button
+      const buttons = document.getElementById(buttonGroupId).getElementsByTagName('button');
+      buttons[0].classList.toggle('active', value);
+      buttons[1].classList.toggle('active', !value);
     }
 
     // Function to reset the form
@@ -229,16 +230,17 @@
       setAR(false);
       setStroke(false);
       document.getElementById('result').innerText = '';
+      document.getElementById('nomogram-explanation').style.display = 'none';
     }
 
     // Main calculation function
     function calculateRisk() {
       // Get input values
-      const creatinine = parseFloat(document.getElementById('creatinine').value);
-      const lymphocyte = parseFloat(document.getElementById('lymphocyte').value);
-      const hemoglobin = parseFloat(document.getElementById('hemoglobin').value);
-      const lvef = parseFloat(document.getElementById('lvef').value);
-      const dimer = parseFloat(document.getElementById('dimer').value);
+      const creatinine = parseFloat(document.getElementById('creatinine').value) || 0;
+      const lymphocyte = parseFloat(document.getElementById('lymphocyte').value) || 0;
+      const hemoglobin = parseFloat(document.getElementById('hemoglobin').value) || 0;
+      const lvef = parseFloat(document.getElementById('lvef').value) || 0;
+      const dimer = parseFloat(document.getElementById('dimer').value) || 0;
 
       // Validate inputs
       if (isNaN(creatinine) || isNaN(lymphocyte) || isNaN(hemoglobin) || isNaN(lvef) || isNaN(dimer)) {
@@ -271,11 +273,19 @@
       points += (dimer / 5500) * 55;
 
       // Calculate probability based on total points (190 points = 0.1, 280 points = 0.7)
-      let probability = 0.1 + ((points - 190) / 90) * 0.6;
-      probability = Math.max(0.1, Math.min(0.7, probability)); // Ensure probability stays within 0.1 to 0.7
+      let resultText = `Total Points: ${points.toFixed(2)}. `;
+      
+      if (points < 190) {
+        resultText += "The risk of developing post-op MINS is <10%.";
+      } else {
+        let probability = 0.1 + ((points - 190) / 90) * 0.6;
+        probability = Math.max(0.1, Math.min(0.7, probability));
+        resultText += `The probability of the total points was ${probability.toFixed(2)}, indicating a ${(probability * 100).toFixed(2)}% risk of developing post-op MINS.`;
+      }
 
       // Display result
-      document.getElementById('result').innerText = `Total Points: ${points.toFixed(2)}. The “Probability” of the total points was ${probability.toFixed(2)}, indicating a ${(probability * 100).toFixed(2)}% risk of developing post-op MINS.`;
+      document.getElementById('result').innerText = resultText;
+      document.getElementById('nomogram-explanation').style.display = 'block';
     }
   </script>
 </body>
